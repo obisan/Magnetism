@@ -92,58 +92,32 @@ def main():
     systems = simulation(T, system)
 
     print("Build system finished successful.")
-    t1 = time.clock()
 
     X = np.array( [x[0][0] for x in systems] )
     M = np.array( [x[0][1] for x in systems] )
 
-    '''
     fig = plt.figure()
     ax0 = fig.add_subplot(2, 1, 1)
     im0 = ax0.imshow(np.zeros((SIZE, SIZE)), vmin=-1, vmax=1)
-
     ax1 = fig.add_subplot(2, 1, 2, xlim=(X.min(), X.max()), ylim=(M.min(), M.max()))
-    #ax1 = plt.axes(xlim=(X.min(), X.max()), ylim=(M.min(), M.max()))
     im1, = ax1.plot([], [])
 
     def animate(i):
         im0.set_data(systems[i][1])
         im1.set_data(X[:i], M[:i])  # update the data
         return im1,
-
-    #Init only required for blitting to give a clean slate.
     def init():
-        #im0.set_data(np.zeros((SIZE, SIZE)))
         im0.set_data([[]])
         im1.set_data([],[])
         return im1,
 
+    print("Convert video...")
+    t1 = time.clock()
     anim = manimation.FuncAnimation(fig, animate, frames=len(X), init_func=init, interval=10, blit=False)
     anim.save('test_plot.mp4', fps=FPS, extra_args=['-vcodec', 'libx264'])
-    #plt.show()
-    '''
-
-    FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title='Movie Test', artist='Matplotlib', comment='Movie support!')
-    writer = FFMpegWriter(fps=FPS, metadata=metadata)
-
-    fig = plt.figure()
-    ax0 = fig.add_subplot(2, 1, 1)
-    im0 = ax0.imshow(np.zeros((SIZE, SIZE)), vmin=-1, vmax=1)
-    ax1 = fig.add_subplot(2, 1, 2, xlim=(X.min(), X.max()), ylim=(M.min(), M.max()))
-    im1, = ax1.plot([],[])
-
-    print("Convert video...")
-    with writer.saving(fig, "writer_test.mp4", DPI):
-        for i in range(len(systems)):
-            im0.set_data(systems[i][1])
-            im1.set_data(X[:i], M[:i])
-            writer.grab_frame()
-
 
     print("Convert video finished successful.")
     print("Total time of converting: %.3f sec." % (time.clock() - t1))
-
 
 if __name__ == "__main__":
     main()
